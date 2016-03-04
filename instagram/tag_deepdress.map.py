@@ -28,7 +28,6 @@ instagram = db.Instagram
 matches = db.Matches
 # already tagged
 ids = set([m['_id'] for m in matches.find()])
-pool = Pool(processes=4)
 
 def match_and_save(i):
 	try:
@@ -40,10 +39,11 @@ def match_and_save(i):
 			time.sleep(1)
 			return(1)
 	except:
-		print("failed on ", i)
+		#print("failed on ", i)
 		return(0)
 
 
-totals = (pool.map(match_and_save, instagram.find()))
+pool = Pool(processes=5)
+totals = pool.map(match_and_save, instagram.find())
 print(sum(totals), len(totals))
 
