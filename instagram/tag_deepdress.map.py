@@ -24,8 +24,8 @@ def predict_deep_dress(file_id, top_n):
 
 client = MongoClient()
 db = client.DeepDress
-instagram = db.Instagram
-matches = db.Matches
+instagram = db.InstagramV4
+matches = db.MatchesV4
 # already tagged
 ids = set([m['_id'] for m in matches.find()])
 
@@ -43,7 +43,7 @@ def match_and_save(i):
 		return(0)
 
 
-pool = Pool(processes=5)
+pool = Pool(processes=5) # damn rate limits
 totals = pool.map(match_and_save, instagram.find())
 print(sum(totals), len(totals))
 

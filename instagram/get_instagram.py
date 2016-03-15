@@ -12,12 +12,13 @@ def fetchAndStash(url, client):
 		j = json.loads(payload)
 
 		if j['meta']['code'] == 200 :
-			try: 
-				result = client.DeepDress.Instagram.insert_many([{'_id' : i['caption']['id'], 'payload': payload.encode('utf-8'), 'image': i['images']['low_resolution']['url']} for i in j['data'] if i['caption'] is not None])
-			except:
-				print("bad batch url: " + url)
-				with open('error', 'a') as of:
-					of.write(f.decode('utf-8'))
+			for i in j['data']:
+				try:
+					result = client.DeepDress.InstagramV4.insert({'_id' : i['link'], 'payload' : i, 'image' : i['images']['low_resolution']['url']}) 
+				except:
+					print("bad batch url: " + url + '; tried to insert ' + i)
+					with open('error', 'a') as of:
+						of.write(f.decode('utf-8'))
 
 			time.sleep(1)
 			fetchAndStash(j['pagination']['next_url'], client)

@@ -6,7 +6,7 @@ matches = client.DeepDress.Matches
 
 probs = [i['prediction']['styleNames'][0]['probability'] for i in matches.find()]
 
-rounded = [round(i, -1) for i in probs]
+rounded = [round(round(i, -1)) for i in probs]
 
 for key, rows in itertools.groupby(sorted(rounded)):
     print(key, sum(1 for r in rows))
