@@ -147,7 +147,7 @@ app.post('/image/', function(req, res)
    res.json{file_id=tmpfile}
 end)
 
--- this endoiint doesn't seem to work
+-- this endoiint doesn't seem to work after upgrade
 --app.get('/fetchimage/', function(req, res)
 --   local img = base64.decode(req.body)
 --   --local tmpfile = os.tmpname()
@@ -319,17 +319,20 @@ $(document).ready(function() {
 
         
         <div class="page-header">
-            <h2 id="match">Dress Match</h2>
+            <h2 id="match"><span class="glyphicon glyphicon-camera" aria-hidden="true"></span></h2>
         </div>
-        <div class = "jumbotron">
 
+				<div class = "jumbotron">
         <form id="myForm" action="/imageraw/" method="post" class="form-inline" role="form">
+						<big>
             <div class="form-group" style="margin-right:10px">
                 <h2>
-                <label for="file"><span class="glyphicon glyphicon-camera" aria-hidden="true"></span>  Use photo (jpeg)</label>
+                <label for="file"><span class="glyphicon glyphicon-camera" aria-hidden="true"></span></label>
                 </h2>
                 <input type="file" name="file"  accept="image/*"></input> 
             </div>
+						</big>
+						<hr>
             <button type="submit" class="btn btn-default">Find me a dress</button>
         </form>
         </div>
@@ -394,7 +397,18 @@ $(document).ready(function() {
         </div>
 
         <div class="panel panel-default">
-        <div class="panel-heading"><bold>GET</bold> /predict/?file_id=123456.jpeg&top_n=1</div>
+        <div class="panel-heading"><bold>GET</bold> to /wget/?url=http://myurl/image.jpeg to tell DeepDress to fetch the image</div>
+        <div class="panel-body">
+        <pre id="json">
+{
+  "file_id": "123456.jpeg"
+}
+</pre>
+        </div>
+        </div>
+ 
+        <div class="panel panel-default">
+        <div class="panel-heading"><bold>GET</bold> /predict/?file_id=123456.jpeg&top_n=2</div>
         <div class="panel-body">
         <pre id="json">
 {
