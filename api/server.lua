@@ -166,7 +166,7 @@ end)
 
 app.get('/wget/', function(req, res)
     local tmpfile = getname(req.body)
-    local wget = os.capture("wget -O " .. app.datadir .. tmpfile .. "  " .. req.url.args.url) 
+    local wget = os.capture("wget -U 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:14.0) Gecko/20100101 Firefox/14.0.1' -O " .. app.datadir .. tmpfile .. "  " .. req.url.args.url) 
     print("got file " .. tmpfile)
     res.json{file_id = tmpfile}
 end)
@@ -327,7 +327,7 @@ $(document).ready(function() {
 						<big>
             <div class="form-group" style="margin-right:10px">
                 <h2>
-                <label for="file"><span class="glyphicon glyphicon-camera" aria-hidden="true"></span></label>
+                <label for="file"></label>
                 </h2>
                 <input type="file" name="file"  accept="image/*"></input> 
             </div>
