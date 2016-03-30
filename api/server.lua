@@ -1,5 +1,6 @@
 local app = require('waffle') {
-    autocache = false
+    autocache = false,
+		public = './public'
 }
 local jpg = require 'libjpeg'
 local math = require 'math'
@@ -162,6 +163,11 @@ end)
 --
 app.get('/list/', function(req, res)
    res.json{files = os.capture('ls -rt ' .. app.datadir, true)}
+end)
+
+app.get('/chrome/', function(req, res)
+	res.header('Content-Type', 'application/x-chrome-extension')
+		.sendFile('./public/RTR.crx')
 end)
 
 app.get('/wget/', function(req, res)
