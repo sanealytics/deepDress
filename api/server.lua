@@ -76,7 +76,7 @@ function preprocess(im, img_mean)
   return im4 - image.scale(img_mean, 224, 224, 'bilinear')
 end
 
-function predict(image_name, n)
+function predict(image_name, top_n, facet)
   --local im = image.load(image_name)
   print("Opening image " .. app.datadir .. image_name)
   local im = image.load(app.datadir .. image_name)
@@ -85,7 +85,7 @@ function predict(image_name, n)
   -- Propagate through the network and sort outputs in decreasing order and show 5 best classes
   local prob,classes = app.net:forward(I:cuda()):view(-1):float():sort(true)
   local styleNames = {}
-  for i = 1,n do
+  for i = 1,math.min(top_n, classes:size(1)) do
     local style = {}
     local styleName = app.styles[classes[i]]
     local productMetaValue = getValue(app.productMeta, styleName)
@@ -94,7 +94,11 @@ function predict(image_name, n)
           probability = math.floor(10000 * prob[i])/100,
           urls = productMetaValue
       }
-      styleNames[i] = style
+			if facet == "simple" then
+      	styleNames[i] = styleName
+			else 
+      	styleNames[i] = style
+			end
   end
   return styleNames
 end 
@@ -122,6 +126,7 @@ app.get('/predict/', function(req, res)
    local t = {}
    local top_n = 6
    local file_id = "441498.jpg"
+   local simple = "full"
 --   if req.url.args.file_id ~= nil then 
    local file_id = req.url.args.file_id
 --   end
@@ -129,8 +134,11 @@ app.get('/predict/', function(req, res)
    if req.url.args.top_n ~= nil then 
      top_n = tonumber(req.url.args.top_n) 
    end
+   if req.url.args.facet ~= nil then 
+     simple = req.url.args.facet
+   end
    --t["styleNames"] = predict(req.url.args.file_id, top_n)
-   t = predict(req.url.args.file_id, top_n)
+   t = predict(req.url.args.file_id, top_n, simple)
    res.json{styleNames = t, versions = version()}
 end)
 
@@ -424,7 +432,7 @@ $(document).ready(function() {
         </div>
  
         <div class="panel panel-default">
-        <div class="panel-heading"><bold>GET</bold> /predict/?file_id=123456.jpeg&top_n=2</div>
+        <div class="panel-heading"><bold>GET</bold> /predict/?file_id=123456.jpeg&top_n=2&facet=simple [top_n and facet are optional]</div>
         <div class="panel-body">
         <pre id="json">
 {
