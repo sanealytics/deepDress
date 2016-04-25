@@ -108,11 +108,19 @@ function os.capture(cmd, raw)
   s = string.gsub(s, '%s+$', '')
   s = string.gsub(s, '[\n\r]+', ' ')
   return s
-end 
+end
+
+function version()
+	local version = {
+		algorithm = "1.0-deep5",
+		api = "1.0"
+	}
+	return version
+end
 
 app.get('/predict/', function(req, res)
    local t = {}
-   local top_n = 5
+   local top_n = 6
    local file_id = "441498.jpg"
 --   if req.url.args.file_id ~= nil then 
    local file_id = req.url.args.file_id
@@ -123,7 +131,7 @@ app.get('/predict/', function(req, res)
    end
    --t["styleNames"] = predict(req.url.args.file_id, top_n)
    t = predict(req.url.args.file_id, top_n)
-   res.json{styleNames = t}
+   res.json{styleNames = t, versions = version()}
 end)
 
 app.get('/', function(req, res)
@@ -131,15 +139,15 @@ app.get('/', function(req, res)
 end)
 
 
-function getname(test)
-    return os.time() .. '-' .. math.floor(math.random() * 100000) .. '.jpeg'
+function getname(ext)
+    return os.time() .. '-' .. math.floor(math.random() * 100000) .. ext
 end
 
 app.post('/image/', function(req, res)
    -- print(req)
    local img = base64.decode(req.body)
    --local tmpfile = os.tmpname()
-   local tmpfile = getname(req.body)
+   local tmpfile = getname('.jpeg')
    print("writing out " .. tmpfile)
    local tmphandle = assert(io.open(app.datadir .. tmpfile, 'wb'))
  
@@ -171,7 +179,8 @@ app.get('/chrome/', function(req, res)
 end)
 
 app.get('/wget/', function(req, res)
-    local tmpfile = getname(req.body)
+		local ext = string.gsub(req.url.args.url, '.*%.', '')
+    local tmpfile = getname('.' .. ext)
     local wget = os.capture("wget -U 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:14.0) Gecko/20100101 Firefox/14.0.1' -O " .. app.datadir .. tmpfile .. "  " .. req.url.args.url) 
     print("got file " .. tmpfile)
     res.json{file_id = tmpfile}
@@ -179,7 +188,7 @@ end)
 
 app.post('/imageraw/', function(req, res)
     -- local tmpfile = req.form.file.filename
-    local tmpfile = getname(req.body)
+    local tmpfile = getname('.jpeg')
 
     print("got file " .. tmpfile ..'!')
     req.form.file:save{path = app.datadir .. tmpfile}
@@ -189,7 +198,7 @@ end)
 --- DONOTUSE -- couldn't get this to work.. maybe an async issue but not sure
 app.post('/imagepredict/', function(req, res)
     -- local tmpfile = req.form.file.filename
-    local tmpfile = getname(req.body)
+    local tmpfile = getname('.jpeg')
 
     print("got file " .. tmpfile ..'!')
     req.form.file:save{path = app.datadir .. tmpfile}
@@ -232,6 +241,7 @@ app.get('/demo/', function(req, res)
 <html>
 <head>
 <title>Deep Dress</title>
+<link rel="icon" type="image/png" href="./public/icon_16.png">
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
 <script src="http://malsup.github.com/jquery.form.js"></script> 
 <meta name="viewport" content="width=device-width, initial-scale=1.0 maximum-scale=1, user-scalable=no"">
