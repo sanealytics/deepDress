@@ -432,7 +432,7 @@ $(document).ready(function() {
         </div>
  
         <div class="panel panel-default">
-        <div class="panel-heading"><bold>GET</bold> /predict/?file_id=123456.jpeg&top_n=2&facet=simple [top_n and facet are optional]</div>
+        <div class="panel-heading"><bold>GET</bold> /predict/?file_id=123456.jpeg&top_n=2&facet=full [top_n and facet=simple are optional]</div>
         <div class="panel-body">
         <pre id="json">
 {
